@@ -1,0 +1,4 @@
+[submodule "tvm_local"]
+	path = tvm_local
+	url = git@github.com:liangfu/tvm.git
+	branch = sparse
