@@ -17,7 +17,7 @@ from mxnet import nd, autograd, gluon
 
 data_ctx = mx.cpu()
 # model_ctx = mx.cpu()
-model_ctx = mx.gpu(1)
+model_ctx = mx.cpu(0)
 
 
 # ## Load MNIST data
@@ -125,24 +125,26 @@ def model_predict(net,data):
     output = softmax(yhat_linear)
     return nd.argmax(output, axis=1)
 
-samples = 10
+if __name__=='__main__':
 
-mnist_test = mx.gluon.data.vision.MNIST(train=False, transform=transform)
+    samples = 10
 
-# let's sample 10 random data points from the test set
-sample_data = mx.gluon.data.DataLoader(mnist_test, samples, shuffle=True)
-for i, (data, label) in enumerate(sample_data):
-    data = data.as_in_context(model_ctx)
-    im = nd.transpose(data,(1,0,2,3))
-    im = nd.reshape(im,(28,10*28,1))
-    imtiles = nd.tile(im, (1,1,3))
-    
-    # plt.imshow(imtiles.asnumpy())
-    # plt.show()
-    pred=model_predict(net,data.reshape((-1,784)))
-    print('model predictions are:', pred)
-    print('true labels :', label)
-    break
+    mnist_test = mx.gluon.data.vision.MNIST(train=False, transform=transform)
+
+    # let's sample 10 random data points from the test set
+    sample_data = mx.gluon.data.DataLoader(mnist_test, samples, shuffle=True)
+    for i, (data, label) in enumerate(sample_data):
+        data = data.as_in_context(model_ctx)
+        im = nd.transpose(data,(1,0,2,3))
+        im = nd.reshape(im,(28,10*28,1))
+        imtiles = nd.tile(im, (1,1,3))
+
+        # plt.imshow(imtiles.asnumpy())
+        # plt.show()
+        pred=model_predict(net,data.reshape((-1,784)))
+        print('model predictions are:', pred)
+        print('true labels :', label)
+        break
 
 
 # ## Conclusion
